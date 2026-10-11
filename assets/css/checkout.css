@@ -1,0 +1,602 @@
+:root {
+    --primary: #0056ff;
+    --primary-gradient: linear-gradient(135deg, #0056ff 0%, #00a2ff 100%);
+    --bg-light: #f4f7fe;
+    --text-main: #1a2b4b;
+    --text-muted: #6b7c93;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --km-font: 'Kantumruy Pro', 'Kantumruy', 'Noto Sans Khmer', 'Hanuman', 'Khmer OS Content', 'Khmer Sangam MN', system-ui, sans-serif;
+}
+
+
+/* ==========================================================================
+   全新侧边交互系统 (V28.7 - 核心优先级提升)
+   ========================================================================== */
+
+/* 1. 全局遮罩层 (PC 端降低亮度) */
+.side-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.25); /* 调浅背景，用户反馈太黑 */
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.side-panel-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 2. 侧边容器 (相对于 checkout-container 定位) */
+.side-panel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2000;
+}
+
+/* 3. 侧面板包装器 */
+.side-panel-wrapper {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    width: auto;
+    height: auto;
+    z-index: 2500;
+    pointer-events: auto;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.side-panel-wrapper.left { 
+    left: 0; 
+}
+.side-panel-wrapper.right { 
+    right: 0; 
+}
+
+body.panel-open .side-tab {
+    display: none !important;
+}
+
+.side-tab {
+    width: 38px;
+    background: #ffb300;
+    color: white;
+    padding: 20px 0;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 179, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    transform: translateY(-50%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.side-panel-wrapper.left .side-tab {
+    right: 100%; /* 核心：向左彻底推出容器边缘 */
+    border-radius: 16px 0 0 16px;
+}
+
+.side-panel-wrapper.right .side-tab {
+    left: 100%; /* 核心：向右彻底推出容器边缘 */
+    border-radius: 0 16px 16px 0;
+}
+
+.side-tab .tab-text {
+    writing-mode: vertical-lr;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.side-tab .tab-icon {
+    font-size: 0.88rem;
+}
+
+/* 4. 独立抽屉系统 */
+.side-drawer {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 3100;
+}
+
+.drawer-header {
+    background: #ffb300;
+    padding: 18px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+}
+
+.header-icon-box {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.header-text .main-title { font-weight: 800; font-size: 0.9rem; }
+.header-text .sub-title { font-size: 0.65rem; opacity: 0.9; }
+
+.drawer-content {
+    padding: 0;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.help-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+}
+
+@media (min-width: 769px) {
+    .side-drawer {
+        width: 320px;
+        position: absolute;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        right: 45px;
+        top: 40%;
+        transform: translateY(-50%) translateX(15px);
+        border-radius: 16px;
+    }
+    .side-drawer.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+        padding-top: 10px;
+    }
+    
+    .side-panel-container {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
+    }
+
+    .side-panel-wrapper { 
+        position: fixed; 
+    }
+    
+    .side-panel-wrapper.left { left: 0; top: 40%; }
+    .side-panel-wrapper.right { right: 0; top: 40%; }
+    
+    .side-panel-wrapper.left .side-tab { right: -36px; border-radius: 0 14px 14px 0; }
+    .side-panel-wrapper.right .side-tab { left: -36px; border-radius: 14px 0 0 14px; }
+
+    .side-drawer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw !important;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.1, 0.7, 0.1, 1);
+        border-radius: 24px 24px 0 0 !important;
+        z-index: 3100;
+    }
+    .side-drawer.active { transform: translateY(0); }
+}
+
+/* 高棉语视觉优化 (V20.1) - 解决系统默认字体太细的问题 */
+html[lang="km"] body {
+    font-family: var(--km-font) !important;
+}
+
+html[lang="km"] .detail-label,
+html[lang="km"] .detail-value,
+html[lang="km"] div,
+html[lang="km"] span,
+html[lang="km"] button {
+    font-weight: 500;
+    /* 高棉语字符在 400 字重下通常偏细，提升至 500 以获得更好的阅读体验 */
+}
+
+html[lang="km"] .fw-bold,
+html[lang="km"] strong {
+    font-weight: 700 !important;
+}
+
+/* 语言切换器样式 */
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 6px;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    color: #666;
+}
+
+.lang-btn {
+    cursor: pointer;
+    padding: 0 3px;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.lang-btn.active {
+    color: #0d6efd;
+    font-weight: bold;
+}
+
+.lang-btn:hover {
+    color: #0d6efd;
+}
+
+.lang-switcher .divider {
+    margin: 0 2px;
+    opacity: 0.3;
+}
+
+body {
+    background: var(--bg-light);
+    background-image: radial-gradient(at 0% 0%, rgba(0, 86, 255, 0.05) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 162, 255, 0.08) 0px, transparent 50%);
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    align-items: center; /* 改回居中，满足用户“展示要居中”的要求 */
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.checkout-container {
+    max-width: 440px;
+    width: 100%;
+    padding: 0 10px;
+    position: relative;
+    margin: 0 auto; /* 核心修正：确保在 flex 容器内也强制水平居中 */
+}
+
+.payment-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 15px 40px rgba(0, 86, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 6px 14px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.amount-display {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #0055ff;
+    margin: 5px 0 2px 0 !important;
+    letter-spacing: -1px;
+    text-align: center;
+}
+
+.amount-warning-container {
+    margin-top: 0 !important;
+    margin-bottom: 5px !important;
+}
+
+.qr-main-layout {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 15px 0;
+    padding: 0 10px;
+}
+
+
+#qrcode {
+    padding: 0;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    flex: 0 0 60%; /* 二维码占据左侧 3/5 */
+}
+
+.timer-side-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex: 0 0 40%; /* 倒计时占据右侧 2/5 */
+}
+
+.final-qr-img {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 增强型显眼倒计时 (V32.0 - 终极超大版) */
+.circular-timer.prominent {
+    width: 100px;
+    height: 100px;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 2px;
+    box-shadow: 0 6px 20px rgba(255, 77, 79, 0.18);
+    border: 1px solid rgba(255, 77, 79, 0.08);
+}
+
+.circular-timer.prominent .circle-bg {
+    fill: none;
+    stroke: #f1f5f9;
+    stroke-width: 7;
+}
+
+.circular-timer.prominent .circle {
+    fill: none;
+    stroke: #dc3545;
+    stroke-width: 7;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s ease;
+}
+
+.circular-timer.prominent .percentage {
+    font-size: 28px;
+    font-weight: 900;
+    fill: #dc3545;
+    text-anchor: middle;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.timer-hint-text {
+    font-size: 0.72rem;
+    color: #dc3545;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.35;
+    width: 100%;
+    max-width: 130px;
+}
+
+
+.btn-pay {
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none;
+    width: 100%;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-pay:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 86, 255, 0.4);
+}
+
+/* 订单详情卡片 */
+.order-details-card {
+    background: #ffffff;
+    border: 1px solid #eef2f6;
+    border-radius: 12px;
+    margin: 5px 20px 8px 20px;
+    padding: 2px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.detail-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.detail-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: right;
+    word-break: break-all;
+}
+
+#display-card-no {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+#display-order-no {
+    font-size: 0.72rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.mini-copy-btn {
+    background: #f0f7ff;
+    color: #448aff;
+    border: none;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bank-pill-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    /* 增加间距 */
+    padding: 0 5px;
+}
+
+.bank-pill img {
+    width: 100%;
+    height: 48px;
+    /* 稍微调低高度以获得更好的比例 */
+    object-fit: contain;
+    background: #fff;
+    border: 1.5px solid #d1d9e0;
+    /* 显著加深边框颜色 */
+    border-radius: 12px;
+    padding: 3px;
+    /* 极度压缩内边距，消除中心空白 */
+    transition: all 0.3s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /* 增加微弱投影 */
+}
+
+.bank-pill.active img {
+    border-color: var(--primary);
+    border-width: 2.5px;
+    transform: scale(1.05);
+}
+
+.qr-action-group {
+    background: #f1f5f9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 8px 20px 0 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.qr-hint-row {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-align: center;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #f8fafc;
+}
+
+.qr-save-btn {
+    border: none;
+    width: 100%;
+    padding: 9px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.qr-save-btn i {
+    font-size: 0.9rem;
+    color: #ffffff !important;
+}
+
+/* 呼吸灯效果 (V20.0) */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #00c853;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 0 rgba(0, 200, 83, 0.4);
+    animation: dot-pulse 2s infinite ease-in-out;
+}
+
+@keyframes dot-pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(0, 200, 83, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 200, 83, 0);
+    }
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.copy-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.copy-toast.show {
+    opacity: 1;
+    transform: translate(-50%, -60%);
+}
